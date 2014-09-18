@@ -152,9 +152,11 @@ public class SimpleScene extends GLCanvas implements GLEventListener {
 	 */
 	@Override
 	public void display(GLAutoDrawable drawable) {
-		ObjModel model = null;
+		ObjModel crayonModel = null;
+		ObjModel boxModel = null;
 		try {
-			model = new ObjModel(new File("Crayon.obj"));
+			crayonModel = new ObjModel(new File("Crayon.obj"));
+			boxModel = new ObjModel(new File("Box.obj"));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -167,9 +169,9 @@ public class SimpleScene extends GLCanvas implements GLEventListener {
 
 		// ----- Your OpenGL rendering code here (Render a white triangle for
 		// testing) -----
-		gl.glTranslatef(0.0f, -5.0f, -15.0f); // translate into the screen
+		gl.glTranslatef(0.0f, -5.0f, -30.0f); // translate into the screen
 
-		for (Face face : model.getFaces()) {
+		for (Face face : crayonModel.getFaces()) {
 			gl.glEnable(GL_TEXTURE_2D);
 			if (face.getVertices().size() == 3) {
 				gl.glBegin(GL_TRIANGLES);
@@ -180,14 +182,44 @@ public class SimpleScene extends GLCanvas implements GLEventListener {
 			}
 
 			for (int i = 0; i < face.getVertices().size(); i++) {
-				if (model.getTextureCoordinates().size() > i) {
-					Vertex3f textureCoordinate = model.getTextureCoordinates()
-							.get(face.getTextureCoordinates().get(i) - 1);
+				if (crayonModel.getTextureCoordinates().size() > i) {
+					Vertex3f textureCoordinate = crayonModel
+							.getTextureCoordinates().get(
+									face.getTextureCoordinates().get(i) - 1);
 					gl.glTexCoord2f(textureCoordinate.getX(),
 							textureCoordinate.getY());
 				}
 				int vertexIndex = face.getVertices().get(i);
-				Vertex3f vertex = model.getVertices().get(vertexIndex - 1);
+				Vertex3f vertex = crayonModel.getVertices()
+						.get(vertexIndex - 1);
+				gl.glVertex3f(vertex.getX(), vertex.getY(), vertex.getZ());
+			}
+
+			gl.glEnd();
+		}
+		
+		gl.glTranslatef(10.0f, 0.0f, 0.0f); // translate into the screen
+
+		for (Face face : boxModel.getFaces()) {
+			gl.glEnable(GL_TEXTURE_2D);
+			if (face.getVertices().size() == 3) {
+				gl.glBegin(GL_TRIANGLES);
+			} else if (face.getVertices().size() == 4) {
+				gl.glBegin(GL_QUADS);
+			} else {
+				gl.glBegin(GL_POLYGON);
+			}
+
+			for (int i = 0; i < face.getVertices().size(); i++) {
+				if (boxModel.getTextureCoordinates().size() > i) {
+					Vertex3f textureCoordinate = boxModel
+							.getTextureCoordinates().get(
+									face.getTextureCoordinates().get(i) - 1);
+					gl.glTexCoord2f(textureCoordinate.getX(),
+							textureCoordinate.getY());
+				}
+				int vertexIndex = face.getVertices().get(i);
+				Vertex3f vertex = boxModel.getVertices().get(vertexIndex - 1);
 				gl.glVertex3f(vertex.getX(), vertex.getY(), vertex.getZ());
 			}
 
