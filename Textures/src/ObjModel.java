@@ -1,8 +1,15 @@
+import static javax.media.opengl.GL.GL_TEXTURE_2D;
+import static javax.media.opengl.GL.GL_TRIANGLES;
+import static javax.media.opengl.GL2.GL_POLYGON;
+import static javax.media.opengl.GL2GL3.GL_QUADS;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
+import javax.media.opengl.GL2;
 
 public class ObjModel {
 
@@ -59,5 +66,32 @@ public class ObjModel {
 		}
 
 		scanner.close();
+	}
+
+	public void render(GL2 gl) {
+		for (Face face : getFaces()) {
+			gl.glEnable(GL_TEXTURE_2D);
+			if (face.getVertices().size() == 3) {
+				gl.glBegin(GL_TRIANGLES);
+			} else if (face.getVertices().size() == 4) {
+				gl.glBegin(GL_QUADS);
+			} else {
+				gl.glBegin(GL_POLYGON);
+			}
+
+			for (int i = 0; i < face.getVertices().size(); i++) {
+				if (getTextureCoordinates().size() > i) {
+					Vertex3f textureCoordinate = getTextureCoordinates().get(
+							face.getTextureCoordinates().get(i) - 1);
+					gl.glTexCoord2f(textureCoordinate.getX(),
+							textureCoordinate.getY());
+				}
+				int vertexIndex = face.getVertices().get(i);
+				Vertex3f vertex = getVertices().get(vertexIndex - 1);
+				gl.glVertex3f(vertex.getX(), vertex.getY(), vertex.getZ());
+			}
+
+			gl.glEnd();
+		}
 	}
 }
