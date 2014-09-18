@@ -105,8 +105,7 @@ public class SimpleScene extends GLCanvas implements GLEventListener {
 									// lighting
 		Texture texture = null;
 		try {
-			texture = TextureIO.newTexture(new File(
-					"C:\\Users\\Joshua\\Desktop\\boxandcrayon.jpg"), false);
+			texture = TextureIO.newTexture(new File("boxandcrayon.jpg"), false);
 		} catch (GLException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -155,9 +154,7 @@ public class SimpleScene extends GLCanvas implements GLEventListener {
 	public void display(GLAutoDrawable drawable) {
 		ObjModel model = null;
 		try {
-			model = new ObjModel(
-					new File(
-							"C:\\Users\\Joshua\\Documents\\maya\\projects\\default\\scenes\\Crayon.obj"));
+			model = new ObjModel(new File("Crayon.obj"));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
