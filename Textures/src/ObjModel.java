@@ -11,24 +11,24 @@ import java.util.Scanner;
 
 import javax.media.opengl.GL2;
 
+/**
+ * A class to represent a 3D model loaded from a .obj file. It contains
+ * vertices, texture coordinates, and faces.
+ */
 public class ObjModel {
-
-	public List<Vertex3f> getVertices() {
-		return vertices;
-	}
-
-	public List<Vertex3f> getTextureCoordinates() {
-		return textureCoordinates;
-	}
-
-	public List<Face> getFaces() {
-		return faces;
-	}
 
 	private List<Vertex3f> vertices;
 	private List<Vertex3f> textureCoordinates;
 	private List<Face> faces;
 
+	/**
+	 * Creates an ObjModel object from a .obj file
+	 * 
+	 * @param file
+	 *            the file to read.
+	 * @throws FileNotFoundException
+	 *             if the file does not exist.
+	 */
 	public ObjModel(File file) throws FileNotFoundException {
 
 		vertices = new ArrayList<>();
@@ -68,8 +68,14 @@ public class ObjModel {
 		scanner.close();
 	}
 
+	/**
+	 * Renders the model to an instance of {@link GL2#}
+	 * 
+	 * @param gl
+	 *            the instance to which the model will be rendered.
+	 */
 	public void render(GL2 gl) {
-		for (Face face : getFaces()) {
+		for (Face face : faces) {
 			gl.glEnable(GL_TEXTURE_2D);
 			if (face.getVertices().size() == 3) {
 				gl.glBegin(GL_TRIANGLES);
@@ -80,14 +86,14 @@ public class ObjModel {
 			}
 
 			for (int i = 0; i < face.getVertices().size(); i++) {
-				if (getTextureCoordinates().size() > i) {
-					Vertex3f textureCoordinate = getTextureCoordinates().get(
-							face.getTextureCoordinates().get(i) - 1);
+				if (textureCoordinates.size() > i) {
+					Vertex3f textureCoordinate = textureCoordinates.get(face
+							.getTextureCoordinates().get(i) - 1);
 					gl.glTexCoord2f(textureCoordinate.getX(),
 							textureCoordinate.getY());
 				}
 				int vertexIndex = face.getVertices().get(i);
-				Vertex3f vertex = getVertices().get(vertexIndex - 1);
+				Vertex3f vertex = vertices.get(vertexIndex - 1);
 				gl.glVertex3f(vertex.getX(), vertex.getY(), vertex.getZ());
 			}
 

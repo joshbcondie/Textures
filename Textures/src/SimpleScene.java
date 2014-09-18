@@ -1,23 +1,23 @@
-import java.awt.*;
-import java.awt.event.*;
+import static javax.media.opengl.GL.*;
+import static javax.media.opengl.GL2ES1.*;
+import java.awt.Dimension;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import javax.swing.*;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLException;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
-import com.jogamp.opengl.util.FPSAnimator;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureIO;
-
-import static javax.media.opengl.GL.*; // GL constants
-import static javax.media.opengl.GL2.*; // GL2 constants
 
 /**
  * JOGL 2.0 Program Template (GLCanvas) This is a "Component" which can be added
@@ -27,10 +27,9 @@ import static javax.media.opengl.GL2.*; // GL2 constants
 @SuppressWarnings("serial")
 public class SimpleScene extends GLCanvas implements GLEventListener {
 	// Define constants for the top-level container
-	private static String TITLE = "JOGL 2.0 Setup (GLCanvas)"; // window's title
+	private static String TITLE = "Texturing"; // window's title
 	private static final int CANVAS_WIDTH = 640; // width of the drawable
 	private static final int CANVAS_HEIGHT = 480; // height of the drawable
-	private static final int FPS = 60; // animator's target frames per second
 	private static ObjModel crayonModel = null;
 	private static ObjModel boxModel = null;
 
@@ -45,10 +44,6 @@ public class SimpleScene extends GLCanvas implements GLEventListener {
 				canvas.setPreferredSize(new Dimension(CANVAS_WIDTH,
 						CANVAS_HEIGHT));
 
-				// Create a animator that drives canvas' display() at the
-				// specified FPS.
-				final FPSAnimator animator = new FPSAnimator(canvas, FPS, true);
-
 				// Create the top-level container
 				final JFrame frame = new JFrame(); // Swing's JFrame or AWT's
 													// Frame
@@ -62,8 +57,6 @@ public class SimpleScene extends GLCanvas implements GLEventListener {
 						new Thread() {
 							@Override
 							public void run() {
-								if (animator.isStarted())
-									animator.stop();
 								System.exit(0);
 							}
 						}.start();
@@ -72,7 +65,6 @@ public class SimpleScene extends GLCanvas implements GLEventListener {
 				frame.setTitle(TITLE);
 				frame.pack();
 				frame.setVisible(true);
-				animator.start(); // start the animation loop
 			}
 		});
 	}
@@ -109,7 +101,6 @@ public class SimpleScene extends GLCanvas implements GLEventListener {
 		try {
 			texture = TextureIO.newTexture(new File("boxandcrayon.jpg"), false);
 		} catch (GLException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		gl.glBindTexture(GL_TEXTURE_2D, texture.getTextureObject());
@@ -119,12 +110,10 @@ public class SimpleScene extends GLCanvas implements GLEventListener {
 		gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-		// ----- Your OpenGL initialization code here -----
 		try {
 			crayonModel = new ObjModel(new File("Crayon.obj"));
 			boxModel = new ObjModel(new File("Box.obj"));
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -168,13 +157,11 @@ public class SimpleScene extends GLCanvas implements GLEventListener {
 																// buffers
 		gl.glLoadIdentity(); // reset the model-view matrix
 
-		// ----- Your OpenGL rendering code here (Render a white triangle for
-		// testing) -----
-		gl.glTranslatef(0.0f, -5.0f, -30.0f); // translate into the screen
+		gl.glTranslatef(0.0f, -5.0f, -30.0f);
 
 		crayonModel.render(gl);
 
-		gl.glTranslatef(10.0f, 0.0f, 0.0f); // translate into the screen
+		gl.glTranslatef(10.0f, 0.0f, 0.0f);
 
 		boxModel.render(gl);
 	}
