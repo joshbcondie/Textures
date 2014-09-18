@@ -2,15 +2,19 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import javax.swing.*;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
+import javax.media.opengl.GLException;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
 
 import com.jogamp.opengl.util.FPSAnimator;
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureIO;
 
 import static javax.media.opengl.GL.*; // GL constants
 import static javax.media.opengl.GL2.*; // GL2 constants
@@ -99,6 +103,20 @@ public class SimpleScene extends GLCanvas implements GLEventListener {
 																// correction
 		gl.glShadeModel(GL_SMOOTH); // blends colors nicely, and smoothes out
 									// lighting
+		Texture texture = null;
+		try {
+			texture = TextureIO.newTexture(new File(
+					"C:\\Users\\Joshua\\Desktop\\boxandcrayon.jpg"), false);
+		} catch (GLException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		gl.glBindTexture(GL_TEXTURE_2D, texture.getTextureObject());
+		gl.glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+		gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 		// ----- Your OpenGL initialization code here -----
 	}
@@ -155,6 +173,7 @@ public class SimpleScene extends GLCanvas implements GLEventListener {
 		gl.glTranslatef(0.0f, -5.0f, -15.0f); // translate into the screen
 
 		for (Face face : model.getFaces()) {
+			gl.glEnable(GL_TEXTURE_2D);
 			if (face.getVertices().size() == 3) {
 				gl.glBegin(GL_TRIANGLES);
 			} else if (face.getVertices().size() == 4) {
@@ -163,7 +182,14 @@ public class SimpleScene extends GLCanvas implements GLEventListener {
 				gl.glBegin(GL_POLYGON);
 			}
 
-			for (int vertexIndex : face.getVertices()) {
+			for (int i = 0; i < face.getVertices().size(); i++) {
+				if (model.getTextureCoordinates().size() > i) {
+					Vertex3f textureCoordinate = model.getTextureCoordinates()
+							.get(face.getTextureCoordinates().get(i) - 1);
+					gl.glTexCoord2f(textureCoordinate.getX(),
+							textureCoordinate.getY());
+				}
+				int vertexIndex = face.getVertices().get(i);
 				Vertex3f vertex = model.getVertices().get(vertexIndex - 1);
 				gl.glVertex3f(vertex.getX(), vertex.getY(), vertex.getZ());
 			}
